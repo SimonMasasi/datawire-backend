@@ -129,6 +129,7 @@ CORS_ALLOWED_ORIGINS = [
    "http://172.17.17.159:4000",
     "http://localhost:4000",
     "http://localhost:4000",
+    "https://data-set-repository.netlify.app",
 ]
 
 # DEFAULT_RENDERER_CLASSES = (
