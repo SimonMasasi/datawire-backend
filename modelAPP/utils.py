@@ -23,7 +23,7 @@ def upload_compressed_file(compressed_file, model):
         pass
 
 def process_compressed_files(compressed_ref, model):
-    parent_folder = Folder.objects.create(name=model.title, parent_folder=None, model=model)
+    parent_folder = ModelFolder.objects.create(name=model.title, parent_folder=None, model=model)
     total_files = 0
     if isinstance(compressed_ref, zipfile.ZipFile):
         for file_name in compressed_ref.namelist():
@@ -70,7 +70,7 @@ def create_file_from_compressed(compressed_ref, file_info, model, parent_folder)
             file_size = file_info.size if hasattr(file_info, 'size') else len(file_content)
             model.size+=file_size
     model.save()
-    new_file = File.objects.create(size=file_size, name=filename, folder=parent_folder)
+    new_file = ModelFile.objects.create(size=file_size, name=filename, folder=parent_folder)
     upload_path = os.path.join(f'{model.id}', filename_without_extension)
     new_file.file.save(upload_path, ContentFile(file_content))
     FileExtension.objects.create(file=new_file, extension=file_extension)

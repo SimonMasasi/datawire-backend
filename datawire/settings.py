@@ -128,6 +128,8 @@ CORS_ALLOWED_ORIGINS = [
    "http://127.0.0.1:4000",
    "http://172.17.17.159:4000",
     "http://localhost:4000",
+    "http://127.0.0.1:4200",
+    "http://localhost:4200",
     "http://localhost:4000",
     "https://data-set-repository.netlify.app",
 ]

@@ -44,3 +44,9 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
+
+class Regions(models.Model):
+    name = models.CharField(max_length=9000 , unique=True)
+
+    def __str__(self):
+        return self.name

@@ -23,3 +23,7 @@ class RoleAdmin(admin.ModelAdmin):
 class UserRoleAdmin(admin.ModelAdmin):
     list_display = ['user', 'role']
 
+
+@admin.register(Regions)
+class RegionsAdmin(admin.ModelAdmin):
+    list_display=["name"]

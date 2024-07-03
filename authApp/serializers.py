@@ -20,6 +20,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     extra_kwargs = {
         'password': {'write_only': True},
     }
+
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+       model=Regions
+       fields = "__all__"
 class UserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = CustomUser

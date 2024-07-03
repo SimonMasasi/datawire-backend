@@ -82,7 +82,7 @@ class LoginView(APIView):
             user_data = CustomUserSerializer(user).data  # Adjust serializer as needed
             return Response({**user_data, 'token': token.key, 'roles':roles_data})  # Include token
         else:
-            return Response({'error': 'Invalid credentials'})
+            return Response({'error': 'Invalid credentials'}, status=200)
 
 class LogoutView(APIView):
     authentication_classes = [SessionAuthentication]  # Only allow authenticated users to logout
@@ -119,6 +119,13 @@ class RoleUserListView(APIView):
         serializer = UserRolesSerializer(users, many=True)
         return Response(serializer.data)
      
+
+class RegionsListView(APIView):
+    def get(self, request):
+        regions = Regions.objects.all()
+        serializer = RegionSerializer(regions, many=True)
+        return Response(serializer.data)
+    
 class UserRepository(APIView):
     def get(self, request, user_id):
         datasets = Dataset.objects.filter(repository__owner__id = user_id)
@@ -145,7 +152,7 @@ class AddRoleUserView(APIView):
         user = CustomUser.objects.get(id=request.data['userId'])
         role = Role.objects.get(id=request.data['roleId'])
         UserRole.objects.create(user=user, role=role)
-        return Response({'message': 'Successfully ctreated'}, status=200)
+        return Response({'message': 'Successfully created'}, status=200)
     
 class UserDeleteAPIView(APIView):
     def delete(self, request, user_id, format=None):
