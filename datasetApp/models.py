@@ -11,13 +11,19 @@ class Repository(models.Model):
           ('Private', 'Private'),
           ('Public', 'Public')
       )
-    owner = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     name = models.CharField(max_length=50)
     scope = models.CharField(choices=scope_choices, max_length=15, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
       return self.name
+    
+class RepositoryOwners(models.Model):
+    repository  = models.ForeignKey(Repository , on_delete=models.CASCADE , related_name="owner_repository")
+    owner = models.ForeignKey(CustomUser, on_delete = models.CASCADE , related_name="repository_owner")
+
+
+
 
 class Domain(models.Model):
   """Represents a domain of data (e.g., image recognition, NLP)."""

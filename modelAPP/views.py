@@ -83,8 +83,12 @@ class RepositoryAndModelCreateView(APIView):
         user = request.user
         repository = Repository.objects.create(
             scope=data['scope'],
-            owner=request.user,
             name=data['repo_name']
+        )
+
+        RepositoryOwners.objects.create(
+            owner=request.user,
+            repository=repository,
         )
         domain = Domain.objects.filter(name=data['domain']).first()
         model = Model.objects.create(
@@ -147,12 +151,12 @@ class ModelListView(APIView):
         is_my_model = (request.query_params.get('my_model'))
         print(is_my_model)
         if is_my_model == 'true':
-            models = Model.objects.filter(repository__owner__id=request.user.id)
+            models = Model.objects.filter(repository__owner_repository__owner__id=request.user.id)
         elif query and is_my_model=='false':
             models = Model.objects.filter(repository__scope="Public").filter(
                 Q(title__icontains=query) |
                 Q(domain__name__icontains=query) |
-                Q(repository__owner__username__icontains=query) |
+                Q(repository__owner_repository__owner__username__icontains=query) |
                 Q(tags__name__icontains=query)
             ).annotate(votes_count=Count('votes')).distinct().order_by('-votes_count')
         else:

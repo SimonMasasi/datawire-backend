@@ -6,10 +6,21 @@ from rest_framework import serializers
 from .models import Repository, Dataset, Folder, File
 
 class RepositorySerializer(serializers.ModelSerializer):
-    owner = CustomUserSerializer()
+    owner = serializers.SerializerMethodField("get_my_owner")
+    my_id = serializers.SerializerMethodField("my_id_get")
     class Meta:
         model = Repository
-        fields = ['id', 'owner', 'name', 'scope', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'scope', 'created_at', 'updated_at' ,"my_id" , "owner"]
+
+    def get_my_owner(self , obj):
+        owner_model = RepositoryOwners.objects.last().owner
+        serializer_class = CustomUserSerializer(owner_model).data
+        
+        return serializer_class
+    
+    def my_id_get(self,obj):
+        return "heloo"
+        
 
 class FileExtensionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -110,6 +121,8 @@ class ModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
     def get_votes_count(self, obj):
         return obj.model_votes.filter(isUpvoted=True).count()-obj.model_votes.filter(isUpvoted=False).count()
+    
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -121,7 +134,8 @@ class DatasetSerializer(serializers.ModelSerializer):
     votes_count = serializers.SerializerMethodField()
     folders = FolderSerializer(many=True, required=False)
     size_with_unit = serializers.SerializerMethodField()
-    repository = RepositorySerializer(read_only=True)  # Optional field for repository association
+    repository = RepositorySerializer(read_only=True)
+      # Optional field for repository association
     class Meta:
         model = Dataset
         fields = ['id', 'title', 'description', 'domain','total_files', 'repository', 'size_with_unit', 'downloads', 'viewers', 'created_at', 'folders', 'votes','votes_count']
@@ -146,6 +160,7 @@ class DatasetSerializer(serializers.ModelSerializer):
             return f"{round(size / 1024**2, 2)} MB"
         else:
             return f"{round(size / 1024**3, 2)} GB"
+        
 
 
 class DatasetVoteSerializer(serializers.ModelSerializer):

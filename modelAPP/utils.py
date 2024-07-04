@@ -54,7 +54,7 @@ def create_file_from_compressed(compressed_ref, file_info, model, parent_folder)
     else:
         folders = file_info.split('/')
         for folder in folders[:-1]:
-            parent_folder = Folder.objects.get_or_create(name=folder, parent_folder=parent_folder, model=model)[0]
+            parent_folder = ModelFolder.objects.get_or_create(name=folder, parent_folder=parent_folder, model=model)[0]
 
     if parent_folder is None:
         parent_folder = Folder.objects.get_or_create(name=model.title, parent_folder=parent_folder, model=model)[0]
@@ -73,7 +73,7 @@ def create_file_from_compressed(compressed_ref, file_info, model, parent_folder)
     new_file = ModelFile.objects.create(size=file_size, name=filename, folder=parent_folder)
     upload_path = os.path.join(f'{model.id}', filename_without_extension)
     new_file.file.save(upload_path, ContentFile(file_content))
-    FileExtension.objects.create(file=new_file, extension=file_extension)
+    # FileExtension.objects.create(file=new_file, extension=file_extension)
     
     
 

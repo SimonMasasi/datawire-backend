@@ -1,57 +1,27 @@
+from django.apps import apps
 from django.contrib import admin
+
 from .models import *
 
-# Register your models here.
-class RepositoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner', 'scope', 'created_at', 'updated_at')
-    list_filter = ('scope', 'created_at', 'updated_at')
-    search_fields = ('name', 'owner__username')
-    
-admin.site.register(Repository, RepositoryAdmin)
-class DomainAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-admin.site.register(Domain, DomainAdmin)
 
-class DatasetAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'domain', 'repository', 'downloads', 'viewers')
-admin.site.register(Dataset, DatasetAdmin)
+# Get the AppConfig for the 'nircmis_bill_processing' app
+app_config = apps.get_app_config('datasetApp')
 
-class FolderAdmin(admin.ModelAdmin):
-    list_display = ('name', 'dataset', 'parent_folder', 'created_at')
-admin.site.register(Folder, FolderAdmin)
+# Get all models in the app
+models = app_config.get_models()
 
-class FileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'folder', 'created_at', 'file')
-admin.site.register(File, FileAdmin)
+# Register all models in the admin site
+for model in models:
+    # Create a list of all field names in the model
+    field_names = [field.name for field in model._meta.fields]
+    search_field_names = [field.name for field in model._meta.fields]
 
-class CollaboratorAdmin(admin.ModelAdmin):
-    list_display = ('user', 'repository')
-admin.site.register(Collaborator, CollaboratorAdmin)
+    # If the model has a foreign key field, exclude the related field from the search fields
+    for field in model._meta.fields:
+        if field.related_model:
+            related_field_name = f'{field.name}'
+            if related_field_name in search_field_names:
+                search_field_names.remove(related_field_name)
 
-class DatasetDownloadsAdmin(admin.ModelAdmin):
-    list_display = ('dataset', 'user', 'created_at')
-admin.site.register(DatasetDownloads, DatasetDownloadsAdmin)
-
-class DatasetViewersAdmin(admin.ModelAdmin):
-    list_display = ('dataset', 'user', 'created_at')
-admin.site.register(DatasetViewers, DatasetViewersAdmin)
-
-admin.site.register(DatasetVote)
-admin.site.register(FileExtension)
-admin.site.register(Tag)
-admin.site.register(Model)
-admin.site.register(ModelFile)
-admin.site.register(ModelFolder)
-admin.site.register(ModelFileExtension)
-
-
-
-
-@admin.register(ChatRoom)
-class UserRoleAdmin(admin.ModelAdmin):
-    list_display=['dataset']
-
-
-@admin.register(ChatMessages)
-class UserRoleAdmin(admin.ModelAdmin):
-    list_display=['sender' , "chat"]
+    # Register the model with all fields displayed and filters enabled
+    admin.site.register(model, list_display=field_names,  search_fields=search_field_names)
