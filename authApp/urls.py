@@ -28,4 +28,6 @@ urlpatterns = [
     path('create_chat_message/', CreateChatroom.as_view()),
     path('get_model_chat_messages/', GetModelChatroom.as_view()),
     path('create_model_chat_message/', CreateModelChatroom.as_view()),
+    path('share_model/', ModelShareView.as_view()),
+    path('share_data_set/', DatasetShareView.as_view()),
 ]

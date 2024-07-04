@@ -83,6 +83,45 @@ class LoginView(APIView):
             return Response({**user_data, 'token': token.key, 'roles':roles_data})  # Include token
         else:
             return Response({'error': 'Invalid credentials'}, status=200)
+        
+
+class DatasetShareView(APIView):
+    def post(self, request):
+        try:
+            user_id = request.data.get('user_id')
+            dataset_id = request.data.get('dataset_id')
+
+            dataset = Dataset.objects.filter(pk=dataset_id).first()
+            user_data = CustomUser.objects.filter(pk=user_id).first()
+
+            RepositoryOwners.objects.update_or_create(
+                owner=user_data,
+                repository=dataset.repository
+            )
+            return Response({'error': False}, status=200)
+        except Exception as e:
+            print(e)
+            return Response({"error":True})
+        
+
+
+class ModelShareView(APIView):
+    def post(self, request):
+        try:
+            user_id = request.data.get('user_id')
+            model_id = request.data.get('model_id')
+
+            model = Model.objects.filter(pk=model_id).first()
+            user_data = CustomUser.objects.filter(pk=user_id).first()
+
+            RepositoryOwners.objects.update_or_create(
+                owner=user_data,
+                repository=model.repository
+            )
+            return Response({'error': False}, status=200)
+        except Exception as e:
+            print(e)
+            return Response({"error":True})
 
 class LogoutView(APIView):
     authentication_classes = [SessionAuthentication]  # Only allow authenticated users to logout
@@ -109,7 +148,7 @@ class ChangePasswordAPIView(APIView):
         
 class UserListView(APIView):
     def get(self, request):
-        users = CustomUser.objects.filter(is_superuser=False)
+        users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
 

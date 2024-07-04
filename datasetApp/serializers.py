@@ -13,9 +13,9 @@ class RepositorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'scope', 'created_at', 'updated_at' ,"my_id" , "owner"]
 
     def get_my_owner(self , obj):
-        owner_model = RepositoryOwners.objects.last().owner
+        owner_model = RepositoryOwners.objects.filter(repository__pk=obj.id).first().owner
         serializer_class = CustomUserSerializer(owner_model).data
-        
+
         return serializer_class
     
     def my_id_get(self,obj):
@@ -63,11 +63,11 @@ class ModelFileSerializer(serializers.ModelSerializer):
     def get_file_extension(self, obj):
         try:
             return obj.modelfileextension.extension
-        except FileExtension.DoesNotExist:
-            return None
+        except:
+            return ""
 
     class Meta:
-        model = File
+        model = ModelFile
         fields = ['id', 'name', 'file', 'size_with_unit', 'created_at', 'file_extension']
     def get_size_with_unit(self, obj):
         size = obj.size
