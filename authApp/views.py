@@ -94,6 +94,13 @@ class DatasetShareView(APIView):
             dataset = Dataset.objects.filter(pk=dataset_id).first()
             user_data = CustomUser.objects.filter(pk=user_id).first()
 
+
+            if RepositoryOwners.objects.filter(
+                owner=user_data,
+                repository=dataset.repository
+            ).first():
+                return Response({"error":True , "message":"You have already shared this Dataset with this user"})
+
             RepositoryOwners.objects.update_or_create(
                 owner=user_data,
                 repository=dataset.repository
@@ -101,7 +108,7 @@ class DatasetShareView(APIView):
             return Response({'error': False}, status=200)
         except Exception as e:
             print(e)
-            return Response({"error":True})
+            return Response({"error":True , "message":"problem ocurred while adding user"})
         
 
 
@@ -114,6 +121,13 @@ class ModelShareView(APIView):
             model = Model.objects.filter(pk=model_id).first()
             user_data = CustomUser.objects.filter(pk=user_id).first()
 
+            if RepositoryOwners.objects.filter(
+                owner=user_data,
+                repository=model.repository
+            ).first():
+                return Response({"error":True , "message":"You have already shared this model with this user"})
+
+
             RepositoryOwners.objects.update_or_create(
                 owner=user_data,
                 repository=model.repository
@@ -121,7 +135,7 @@ class ModelShareView(APIView):
             return Response({'error': False}, status=200)
         except Exception as e:
             print(e)
-            return Response({"error":True})
+            return Response({"error":True , "message":"problem ocurred while adding user"})
 
 class LogoutView(APIView):
     authentication_classes = [SessionAuthentication]  # Only allow authenticated users to logout
