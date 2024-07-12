@@ -7,7 +7,7 @@ urlpatterns = [
     path("region/" , RegionsListView.as_view()),
     path('login/', LoginView.as_view()),
     path('logout/', LogoutView.as_view()),
-    path('verify-account/', UserVerificationView.as_view()),
+    path('verify-account/', VerifyAccount.as_view()),
     path('send_email_view/', views.send_email_view),
     path('all-users/', UserListView.as_view()),
     path('user-datasets/<int:user_id>/', UserRepository.as_view()),

@@ -96,7 +96,7 @@ class LoginView(APIView):
 
 class VerifyAccount(APIView):
     def post(self, request):
-        token = request.data.get('token')
+        token = request.data.get('verification_code')
         if token is None:
             return Response({'error': 'Please provide token'}, status=200)
         user = CustomUser.objects.filter(verification_code = token , is_verified = False).first()
