@@ -6,19 +6,21 @@ from jinja2 import Environment, FileSystemLoader
 
 
 
-EMAIL_HOST='smtp4.eganet.go.tz'
-PROTOCOL='https'
-EMAIL_PORT=587
-EMAIL_HOST_USER="noreply.mikutano@serikali.go.tz"
-EMAIL_HOST_PASSWORD="dodom@s!mu32"
-EMAIL_USE_SSL=False
-EMAIL_USE_TLS=True
-DEFAULT_FROM_EMAIL="noreply.mikutano@serikali.go.tz"
-DOMAIN='http://localhost:4200'
-DB_DRIVER="sqlite"
+
 
 class EmailNotifications:
     def send_email_notification(emailBody, html_template):
+            EMAIL_HOST='smtp4.eganet.go.tz'
+            PROTOCOL='https'
+            EMAIL_PORT=587
+            EMAIL_HOST_USER="noreply.mikutano@serikali.go.tz"
+            EMAIL_HOST_PASSWORD="dodom@s!mu32"
+            EMAIL_USE_SSL=False
+            EMAIL_USE_TLS=True
+            DEFAULT_FROM_EMAIL="noreply.mikutano@serikali.go.tz"
+            DOMAIN='http://localhost:4200'
+            DB_DRIVER="sqlite"
+
             EMAIL_HOST = EMAIL_HOST
             EMAIL_PASSWORD = EMAIL_HOST_PASSWORD
             EMAIL_USER = EMAIL_HOST_USER
