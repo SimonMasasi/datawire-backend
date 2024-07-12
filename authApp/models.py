@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=50, unique=True)
     verification_code = models.CharField(max_length=6, default=0)
     roles = models.ManyToManyField('Role', through='UserRole')
+    is_verified = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [] 

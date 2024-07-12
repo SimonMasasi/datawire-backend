@@ -18,6 +18,7 @@ from django.db.models import Count
 from django.db.models.functions import TruncDay
 from rest_framework.exceptions import ValidationError
 from django.http import HttpRequest
+from .mailUtils import EmailNotifications
 
 # Import your User model and UserRegistrationSerializer
 
@@ -26,10 +27,18 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-            # user.is_active = False
-            # user.generate_verification_code()
+            user.generate_verification_code()
+            user.is_verified = False
             user.save()
-            # send_verification_email(user)
+
+            body = {
+                'receiver_details': user.email,
+                'user': user,
+                'subject': "Verify Account Email"
+            }
+
+            EmailNotifications.send_email_notification(html_template="confirm_pass.html" ,emailBody=body )
+
             return Response({'email': f'{user.email}'})  # Include token
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -83,6 +92,20 @@ class LoginView(APIView):
             return Response({**user_data, 'token': token.key, 'roles':roles_data})  # Include token
         else:
             return Response({'error': 'Invalid credentials'}, status=200)
+        
+
+class VerifyAccount(APIView):
+    def post(self, request):
+        token = request.data.get('token')
+        if token is None:
+            return Response({'error': 'Please provide token'}, status=200)
+        user = CustomUser.objects.filter(verification_code = token , is_verified = False).first()
+        if user is not None:
+            user.is_verified = True
+            user.save()
+            return Response({"status":True}) 
+        else:
+            return Response({'error': 'Invalid token'}, status=200)
         
 
 class DatasetShareView(APIView):
