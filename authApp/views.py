@@ -98,14 +98,23 @@ class VerifyAccount(APIView):
     def post(self, request):
         token = request.data.get('verification_code')
         if token is None:
-            return Response({'error': 'Please provide token'}, status=200)
+            return Response({'message': 'Please provide token' , "status":False}, status=200)
         user = CustomUser.objects.filter(verification_code = token , is_verified = False).first()
         if user is not None:
             user.is_verified = True
             user.save()
-            return Response({"status":True}) 
+
+            login(request, user)
+            user_roles = UserRole.objects.filter(user=user)
+            roles_data = []
+            for user_role in user_roles:
+                roles_data.append(user_role.role.name)
+
+            token, _ = Token.objects.get_or_create(user=user)
+            user_data = CustomUserSerializer(user).data 
+            return Response({"status":True , "message":"account Activated Successfully" , "user_data":user_data} ,status=200) 
         else:
-            return Response({'error': 'Invalid token'}, status=200)
+            return Response({'message': 'Invalid token' , "status":False}, status=200)
         
 
 class DatasetShareView(APIView):
