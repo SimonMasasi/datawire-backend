@@ -112,7 +112,7 @@ class VerifyAccount(APIView):
 
             token, _ = Token.objects.get_or_create(user=user)
             user_data = CustomUserSerializer(user).data 
-            return Response({"status":True , "message":"account Activated Successfully" , "user_data":user_data} ,status=200) 
+            return Response({"status":True , "message":"account Activated Successfully" , "userData":user_data} ,status=200) 
         else:
             return Response({'message': 'Invalid token' , "status":False}, status=200)
         
