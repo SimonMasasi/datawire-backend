@@ -80,6 +80,10 @@ class LoginView(APIView):
         if username is None or password is None:
             return Response({'error': 'Please provide both username and password'}, status=400)
         user = authenticate(username=username, password=password)
+
+        if user.is_verified==False:
+            return Response({'error': 'verify your accent to continue'}, status=200)
+        
         if user is not None:
             login(request, user)
             user_roles = UserRole.objects.filter(user=user)
