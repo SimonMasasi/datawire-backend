@@ -82,7 +82,7 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
 
         if user.is_verified==False:
-            return Response({'error': 'verify your accent to continue'}, status=200)
+            return Response({'error': 'verify your Account to continue'}, status=200)
         
         if user is not None:
             login(request, user)
