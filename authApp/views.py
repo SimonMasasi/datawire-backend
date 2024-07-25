@@ -80,13 +80,14 @@ class LoginView(APIView):
         if username is None or password is None:
             return Response({'error': 'Please provide both username and password'}, status=400)
         
-        my_user = CustomUser.objects.filter(username = username , is_verified = False).first()
-        user = authenticate(email=username, password=password)
+        user = authenticate(username=username, password=password)
 
-        if my_user.is_verified==False:
-            return Response({'error': 'verify your Account to continue'}, status=200)
+        
         
         if user is not None:
+            if user.is_verified==False:
+                return Response({'error': 'verify your Account to continue'}, status=200)
+            
             login(request, user)
             user_roles = UserRole.objects.filter(user=user)
             roles_data = []
